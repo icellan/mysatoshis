@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html manifest="cache.manifest">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0"/>
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<link rel="apple-touch-icon" href="mysatoshi.png"/>
+		<link href="mysatoshi@2x.png" rel="apple-touch-startup-image">
+
+		<title>My Satoshis</title>
+		
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
+		<link rel="stylesheet" href="mysatoshis.css" />
+		
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	  <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+		<script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+		<script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.5.3-crypto-sha256.js"></script> 
+		<!--script type="text/javascript" src="jsbn.js"></script>
+		<script type="text/javascript" src="jsbn2.js"></script>
+		<script type="text/javascript" src="btc.js"></script>
+		<script type="text/javascript" src="mysatoshis.js"></script-->
+		<script type="text/javascript" src="mysatoshis.min.js"></script>
+		<script>
+		try {
+			$(function() {
+				loadOptions();
+				reload();
+				$("#mtgox_info").on("pageshow", function( event, ui ) {
+					updateMtGoxInfo();
+				});
+			});
+		} catch (error) {
+			console.error("Your javascript has an error: " + error);
+		}
+  	</script>
+    </head>
+    <body>
+        <!-- Home -->
+        <div data-role="page" id="main">
+					<div data-theme="a" data-role="header" data-position="fixed">
+						<a href="#popupAddAddress" data-role="button" data-icon="plus" class="ui-btn-left" data-position-to="window" data-transition="pop" data-iconpos="notext">Add</a>
+						<h3 id="header">My Satoshis</h3>
+						<a href="#options" data-role="button" data-icon="gear" class="ui-btn-right" data-transition="slide" data-iconpos="notext">Options</a>
+					</div>
+					<div data-role="content">
+						<ul id="btclist" data-role="listview" data-divider-theme="a" data-inset="false">
+						</ul>
+					</div>
+					<div data-theme="a" data-role="footer" data-position="fixed">
+						<a href="Javascript: reload()" data-role="button" data-icon="refresh" class="ui-btn-left" data-iconpos="notext">Reload</a>
+						<h3 id="footer">&nbsp;</h3>
+						<a href="#info" data-icon="info" class="ui-btn-right" data-transition="slide" data-iconpos="notext">Info</a>
+					</div>
+				</div>
+				<div data-role="page" id="details">
+					<div data-theme="a" data-role="header" data-position="fixed">
+						<a href="#main" data-icon="back" class="ui-btn-left" data-transition="slide" data-direction="reverse">Back</a>
+						<h3 id="header">Transaction details</h3>
+					</div>
+					<div data-role="content">
+						<ul id="detailsContent" data-role="listview" data-divider-theme="a" data-inset="false" data-split-icon="delete" >
+						</ul>
+					</div>
+					<div data-theme="a" data-role="footer" data-position="fixed" id="footerDetails">
+						<h3>&nbsp;</h3>
+					</div>
+				</div>
+				<div data-role="page" id="options">
+					<div data-theme="a" data-role="header" data-position="fixed">
+						<a href="#main" onClick="reload()" data-icon="back" class="ui-btn-left" data-transition="slide" data-direction="reverse">Back</a>
+						<h3 id="header">Options</h3>
+					</div>
+					<div data-role="content">
+						<div style="padding:10px 20px;">
+							<form name="options" id="options">
+							<label for="options_currency_price" class="select">Currency price</label>
+							<select name="options_currency_price" id="options_currency_price" onChange="saveOptions()">
+								<option value="last">Last</option>
+								<option value="high">High</option>
+								<option value="low">Low</option>
+								<option value="avg">Weighted average</option>
+							</select>
+							<label for="options_currency" class="select">Currency</label>
+							<select name="options_currency" id="options_currency" onChange="saveOptions()">
+								<option value="USD">USD ($)</option>
+								<option value="AUD">AUD ($)</option>
+								<option value="CAD">CAD ($)</option>
+								<option value="CHF">CHF</option>
+								<option value="CNY">CNY (¥)</option>
+								<option value="DKK">DKK (kr)</option>
+								<option value="EUR">EUR (€)</option>
+								<option value="GBP">GBP (£)</option>
+								<option value="HKD">HKD ($)</option>
+								<option value="JPY">JPY (¥)</option>
+								<option value="NZD">NZD ($)</option>
+								<option value="PLN">PLN (zł)</option>
+								<option value="RUB">RUB (руб)</option>
+								<option value="SEK">SEK (kr)</option>
+								<option value="SGD">SGD ($)</option>
+								<option value="THB">THB (฿)</option>
+							</select>
+							<label for="options_currency_format" class="select">Number format</label>
+							<select name="options_currency_format" id="options_currency_format" onChange="saveOptions()">
+								<option value=",.">American ( $ 1,337.00 )</option>
+								<option value=".,">European ( € 1.337,00 )</option>
+								<option value=" ,">French ( € 1 337,00 )</option>
+							</select>
+							<label for="options_bitcoin_unit" class="select">Bitcoin Unit</label>
+							<select name="options_bitcoin_unit" id="options_bitcoin_unit" onChange="saveOptions()">
+								<option value="100000000">BTC</option>
+								<option value="100000">mBTC</option>
+								<option value="100">µBTC</option>
+							</select>
+							</form>
+						</div>
+					</div>
+					<div data-theme="a" data-role="footer" data-position="fixed" id="footerDetails">
+						<h3>&nbsp;</h3>
+					</div>
+				</div>
+				<div data-role="page" id="info">
+					<div data-theme="a" data-role="header" data-position="fixed">
+						<a href="#main" data-icon="back" class="ui-btn-left" data-transition="slide" data-direction="reverse">Back</a>
+						<h3 id="header">About My Satoshis</h3>
+					</div>
+					<div data-role="content">
+						<div style="padding:8px 12px;">
+							<p>My Satoshis is a small web app that can be used to keep track of your bitcoin addresses on the go. It also shows the last transactions for that address.
+							<p>It stores all the addresses you want to monitor in the local storage of your browser, so nothing is stored on a server anywhere.
+							<p>The address balance comes directly from blockchain.info (not via this server) and the currency information from mtgox.com (cached for 5 mins).
+							<p>All resources used in this app will be heavily cached by your mobile phone. After caching most data transfer will be to blockchain.info, which will be about 10KB per request.
+							<p>Have fun!
+							<p><h4>The information on this site is provided as-is and no guarantees are given for the correctness of the information</h4>
+							<p>You are free to donate some BTC at <a href="bitcoin:1Am5MpimH3c61igY6vsrMWwPjYKSX59hoV">1Am5MpimH3c61igY6vsrMWwPjYKSX59hoV</a></p>
+							<p align="center"><img src="qrcode.png"></p>
+						</div>
+					</div>
+					<div data-theme="a" data-role="footer" data-position="fixed" id="footerDetails">
+						<h3>&nbsp;</h3>
+					</div>
+				</div>
+				<div data-role="page" id="mtgox_info">
+					<div data-theme="a" data-role="header" data-position="fixed">
+						<a href="#main" data-icon="back" class="ui-btn-left" data-transition="slide" data-direction="reverse">Back</a>
+						<h3 id="header">Mt. Gox currency info</h3>
+					</div>
+					<div data-role="content">
+						<div style="padding:8px 12px;">
+							<div id="mtgox_info_details"></div>
+						</div>
+					</div>
+					<div data-theme="a" data-role="footer" data-position="fixed" id="footerDetails">
+						<h3>&nbsp;</h3>
+					</div>
+				</div>
+				<div data-role="popup" id="popupAddAddress">
+					<form>
+						<div style="padding:10px 20px;">
+							<h3>Add a bitcoin address to monitor</h3>
+							<label for="label">Label:</label>
+							<input type="text" name="label" id="form_label">
+							<label for="address">Address:</label>
+							<input type="text" name="address" id="form_address">
+							<button type="button" data-theme="b" data-icon="check" onClick="addAddress()">Save address</button>
+							<button type="button" data-theme="a" data-icon="check" onClick="$.mobile.changePage('#main')">Cancel</button>
+						</div>
+					</form>
+				</div>
+    </body>
+</html>
+
