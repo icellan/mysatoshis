@@ -19,7 +19,7 @@ if (preg_match("/^[A-Z]{3}$/", $currency)) {
 	
 	$query = curl_exec($curl_handle);
 	curl_close($curl_handle);
-	
+
 	$ret = $memcache->set($url.$path, $query, MEMCACHE_COMPRESSED, 1800); // cache for 15 minutes
 
 	echo $query;

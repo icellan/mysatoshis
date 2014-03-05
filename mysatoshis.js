@@ -11,7 +11,9 @@ var BTCUnitDisplay = {
 }
 // from http://www.xe.com/symbols.php
 var currencySymbols = {
-	'USD': '$',
+	'USD': '$'
+	};
+/*
 	'AUD': '$',
 	'CAD': '$',
 	'CHF': 'CHF',
@@ -28,10 +30,11 @@ var currencySymbols = {
 	'SGD': '$',
 	'THB': '฿'
 };
+*/
 function reload() {
-	if (!localStorage.getItem('currency')) {
-		localStorage.setItem('currency', 'EUR');
-	}
+	//if (!localStorage.getItem('currency')) {
+		localStorage.setItem('currency', 'USD');
+	//}
 	if (!localStorage.getItem('currencyPrice')) {
 		localStorage.setItem('currencyPrice', 'avg');
 	}
@@ -53,13 +56,13 @@ function reload() {
 		}
 		$('#btclist').listview('refresh');
 		$.mobile.loading('show');
-		$.getJSON('mtgox.php?currency=' + localStorage.getItem('currency'), function(data) {
+		$.getJSON('bitstamp.php?currency=' + localStorage.getItem('currency'), function(data) {
 			currencyValue = data.data[localStorage.getItem('currencyPrice')].value;
 			currencyFormat = localStorage.getItem('currencyFormat');
 			BTCUnit = parseInt(localStorage.getItem('BTCUnit'));
 			BTCUnitRound = Math.log10(BTCUnit);
-			var currencyDisplay = data.data[localStorage.getItem('currencyPrice')].display;
-			currencyChar = data.data[localStorage.getItem('currencyPrice')].currency;
+			var currencyDisplay = 'USD'; //data.data[localStorage.getItem('currencyPrice')].display;
+			currencyChar = 'USD'; //data.data[localStorage.getItem('currencyPrice')].currency;
 			$('#footer').html('1 BTC ' + BTCUnitDisplay[BTCUnit.toString()] + ' '  + '  = <a href="#mtgox_info" style="color: #fff; text-decoration: none">' + currencyChar + ' ' + (currencySymbols[currencyChar] || currencyChar) + ' ' + (currencyValue * (BTCUnit/100000000)).toFixed(2) + "</a>");
 			$.getJSON('http://blockchain.info/multiaddr?active=' + btc_addresses + '&cors=true', function(data) {
 				var total_balance = 0;
